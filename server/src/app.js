@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-console.log('hello world')
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
+const {sequelize} = require('./models')
+const config = require("./config/config")
 
 const app = express()
 
@@ -16,12 +17,10 @@ app.get("/", (req, res) => {
    res.send("hello there")
 })
 
-app.post("/register" , (req , res)=>{
+require('./routes')(app)
 
-   res.send({
-      message: `User ${req.body.email} registered successfully`
+sequelize.sync()
+   .then(()=>{
+      app.listen(config.port)
+      console.log(`server started on port ${config.port}`)
    })
-
-})
-
-app.listen(process.env.PORT || 8081)
